@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Preview ảnh với Update & Undo</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      padding: 20px;
+    }
+    #image-preview {
+      width: 400px;
+      height: 250px;
+      border: 2px solid #ccc;
+      background-size: cover;
+      background-position: center;
+      margin-bottom: 15px;
+      line-height: 250px;
+      text-align: center;
+      color: #555;
+      font-size: 18px;
+      transition: background-image 0.3s ease;
+    }
+    .thumbnail {
+      width: 100px;
+      height: 70px;
+      margin: 5px;
+      cursor: pointer;
+      border: 2px solid transparent;
+      transition: border-color 0.3s ease;
+    }
+    .thumbnail:hover {
+      border-color: #333;
+    }
+  </style>
+</head>
+<body>
+
+  <div id="image-preview">Di chuột qua một hình ảnh bên dưới để hiển thị ở đây.</div>
+
+  <img src="https://picsum.photos/id/1015/200/140" alt="Phong cảnh núi" class="thumbnail" />
+  <img src="https://picsum.photos/id/1016/200/140" alt="Biển xanh" class="thumbnail" />
+  <img src="https://picsum.photos/id/1018/200/140" alt="Rừng cây" class="thumbnail" />
+
+  <script>
+    const previewDiv = document.getElementById('image-preview');
+    const originalText = previewDiv.textContent;
+    const originalBg = previewDiv.style.backgroundImage;
+
+    function update(event) {
+      const previewPic = event.target;
+      console.log("Event triggered:", event);
+      console.log("PreviewPic alt:", previewPic.alt);
+      console.log("PreviewPic src:", previewPic.src);
+
+      previewDiv.textContent = previewPic.alt;
+      previewDiv.style.backgroundImage = `url('${previewPic.src}')`;
+    }
+
+    function undo() {
+      previewDiv.style.backgroundImage = originalBg;
+      previewDiv.textContent = originalText;
+    }
+
+    const thumbnails = document.querySelectorAll('.thumbnail');
+    thumbnails.forEach(img => {
+      img.addEventListener('mouseover', update);
+      img.addEventListener('mouseout', undo);
+    });
+  </script>
+</body>
+</html>
