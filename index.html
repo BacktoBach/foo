@@ -1,73 +1,78 @@
 <!DOCTYPE html>
 <html lang="vi">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Preview ảnh với Update & Undo</title>
-  <style>
-    body {
-      font-family: Arial, sans-serif;
-      padding: 20px;
-    }
-    #image-preview {
-      width: 400px;
-      height: 250px;
-      border: 2px solid #ccc;
-      background-size: cover;
-      background-position: center;
-      margin-bottom: 15px;
-      line-height: 250px;
-      text-align: center;
-      color: #555;
-      font-size: 18px;
-      transition: background-image 0.3s ease;
-    }
-    .thumbnail {
-      width: 100px;
-      height: 70px;
-      margin: 5px;
-      cursor: pointer;
-      border: 2px solid transparent;
-      transition: border-color 0.3s ease;
-    }
-    .thumbnail:hover {
-      border-color: #333;
-    }
-  </style>
+    <meta charset="UTF-8" />
+    <title>Thư viện ảnh tương tác</title>
+    <style>
+        #preview {
+            width: 400px;
+            height: 300px;
+            border: 2px solid #333;
+            margin-bottom: 10px;
+            background-size: cover;
+            background-position: center;
+            text-align: center;
+            line-height: 300px;
+            font-size: 18px;
+            color: #555;
+        }
+        #gallery img {
+            width: 100px;
+            height: 75px;
+            margin: 5px;
+            cursor: pointer;
+            border: 2px solid transparent;
+        }
+        #gallery img:focus {
+            outline: none;
+            border-color: blue;
+        }
+    </style>
 </head>
-<body>
+<body onload="setupGallery()">
 
-  <div id="image-preview">Di chuột qua một hình ảnh bên dưới để hiển thị ở đây.</div>
+    <div id="preview">Di chuột qua một hình ảnh bên dưới để hiển thị ở đây.</div>
+    <div id="gallery">
+        <img class="thumbnail" src="https://images.unsplash.com/photo-1506744038136-46273834b3fb?auto=format&fit=crop&w=100&q=80" alt="Phong cảnh núi non" />
+        <img class="thumbnail" src="https://images.unsplash.com/photo-1507525428034-b723cf961d3e?auto=format&fit=crop&w=100&q=80" alt="Bãi biển hoàng hôn" />
+        <img class="thumbnail" src="https://images.unsplash.com/photo-1494526585095-c41746248156?auto=format&fit=crop&w=100&q=80" alt="Rừng cây xanh" />
+        <img class="thumbnail" src="https://images.unsplash.com/photo-1500534623283-312aade485b7?auto=format&fit=crop&w=100&q=80" alt="Hồ nước yên bình" />
+        <img class="thumbnail" src="https://images.unsplash.com/photo-1470770841072-f978cf4d019e?auto=format&fit=crop&w=100&q=80" alt="Cánh đồng hoa" />
+        <img class="thumbnail" src="https://images.unsplash.com/photo-1504384308090-c894fdcc538d?auto=format&fit=crop&w=100&q=80" alt="Cảnh biển xanh" />
+    </div>
 
-  <img src="https://picsum.photos/id/1015/200/140" alt="Phong cảnh núi" class="thumbnail" />
-  <img src="https://picsum.photos/id/1016/200/140" alt="Biển xanh" class="thumbnail" />
-  <img src="https://picsum.photos/id/1018/200/140" alt="Rừng cây" class="thumbnail" />
+<script>
+    let originalText = "Di chuột qua một hình ảnh bên dưới để hiển thị ở đây.";
+    let originalBackground = "";
 
-  <script>
-    const previewDiv = document.getElementById('image-preview');
-    const originalText = previewDiv.textContent;
-    const originalBg = previewDiv.style.backgroundImage;
-
-    function update(event) {
-      const previewPic = event.target;
-      console.log("Event triggered:", event);
-      console.log("PreviewPic alt:", previewPic.alt);
-      console.log("PreviewPic src:", previewPic.src);
-
-      previewDiv.textContent = previewPic.alt;
-      previewDiv.style.backgroundImage = `url('${previewPic.src}')`;
+    function updatePreview(event) {
+        console.log("Sự kiện kích hoạt: ", event.type);
+        const preview = document.getElementById("preview");
+        const img = event.target;
+        console.log("Ảnh chọn:", img.alt, img.src);
+        preview.style.backgroundImage = `url(${img.src})`;
+        preview.textContent = img.alt;
     }
 
-    function undo() {
-      previewDiv.style.backgroundImage = originalBg;
-      previewDiv.textContent = originalText;
+    function undoPreview(event) {
+        console.log("Sự kiện kích hoạt: ", event.type);
+        const preview = document.getElementById("preview");
+        preview.style.backgroundImage = originalBackground;
+        preview.textContent = originalText;
     }
 
-    const thumbnails = document.querySelectorAll('.thumbnail');
-    thumbnails.forEach(img => {
-      img.addEventListener('mouseover', update);
-      img.addEventListener('mouseout', undo);
-    });
-  </script>
+    function setupGallery() {
+        console.log("Trang đã tải xong, bắt đầu thiết lập thư viện ảnh.");
+        const thumbnails = document.querySelectorAll("#gallery img");
+        thumbnails.forEach((img, index) => {
+            img.setAttribute("tabindex", "0"); // Thêm tabindex để truy cập bàn phím
+            img.addEventListener("mouseover", updatePreview);
+            img.addEventListener("focus", updatePreview);
+            img.addEventListener("mouseleave", undoPreview);
+            img.addEventListener("blur", undoPreview);
+        });
+    }
+</script>
+
 </body>
 </html>
